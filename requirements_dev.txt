@@ -1,6 +1,6 @@
 bdd-tester==0.0.6
 coverage==4.5.2
 coveralls==1.5.1
-lxml==4.3.0
+lxml==4.6.3
 pytest==4.0.2
 pytest-cov==2.6.0
