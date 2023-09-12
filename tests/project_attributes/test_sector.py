@@ -61,16 +61,34 @@ class TestSector(TestCase):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
-          <sector vocabulary="{}" code="11110"/>
+          <sector vocabulary="1" code="11110"/>
         </iati-activity>
         '''
 
+        activity = etree.fromstring(xml)
         test = self.feature.tests[1]
-        for vocab in ["DAC", "1"]:
-            activity = etree.fromstring(xml.format(vocab))
-            result = test(activity, codelists=self.codelists)
+        result = test(activity, codelists=self.codelists)
 
-            assert result is True
+        assert result is True
+
+    def test_sector_we_dont_support_1_0x_vocabularies(self):
+        '''
+        Like the above, but using "DAC" instead of "1", which was the
+        vocabulary name in IATI Standard v1.0x.
+        '''
+
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <sector vocabulary="DAC" code="11110"/>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        test = self.feature.tests[1]
+        result = test(activity, codelists=self.codelists)
+
+        assert result is False
 
     def test_sector_does_not_use_dac(self):
         xml = '''

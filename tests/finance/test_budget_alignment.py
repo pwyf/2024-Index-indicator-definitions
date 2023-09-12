@@ -103,6 +103,7 @@ class TestCRSCode(TestCase):
         tester = BDDTester(steps_path)
         feature = tester.load_feature(feature_path)
         self.test = feature.tests[1]
+        self.codelists = {'Sector': ['1000']}
 
     def test_sector_code(self):
         xml = '''
@@ -117,7 +118,7 @@ class TestCRSCode(TestCase):
         '''
 
         activity = etree.fromstring(xml)
-        result = self.test(activity)
+        result = self.test(activity, codelists=self.codelists)
 
         assert result is True
 
@@ -134,7 +135,7 @@ class TestCRSCode(TestCase):
         '''
 
         activity = etree.fromstring(xml)
-        result = self.test(activity)
+        result = self.test(activity, codelists=self.codelists)
 
         assert result is False
 
@@ -150,6 +151,21 @@ class TestCRSCode(TestCase):
         '''
 
         activity = etree.fromstring(xml)
-        result = self.test(activity)
+        result = self.test(activity, codelists=self.codelists)
 
         assert result is False
+
+    def test_sector_code_not_on_codelist(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <default-aid-type code="A09"/>
+          <transaction>
+            <aid-type code="A03"/>
+          </transaction>
+          <sector code="NOTACODE"/>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
