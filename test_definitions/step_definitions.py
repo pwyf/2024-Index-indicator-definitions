@@ -64,6 +64,16 @@ def then_is_present_and_nonzero(xml, xpath_expression, **kwargs):
     raise StepException(msg)
 
 
+@then(r'`([^`]+)` should be present, or `([^`]+)` should be present for every `([^`]+)`')
+def then_is_present_or_for_every(xml, xpath_expression, for_every_xpath_expression, for_every_elements, **kwargs):
+    try:
+        then_is_present(xml, xpath_expression, **kwargs)
+    except StepException:
+        for element in xml.xpath(for_every_elements):
+            then_is_present(element, for_every_xpath_expression, **kwargs)
+    return xml
+
+
 @then(r'every `([^`]+)` should be on the ([^ ]+) codelist')
 def then_every_on_codelist(xml, xpath_expression, codelist, **kwargs):
     vals = xml.xpath(xpath_expression)
@@ -114,6 +124,17 @@ def then_at_least_one_on_codelist(xml, xpath_expression, codelist, **kwargs):
         codelist=codelist,
     )
     raise StepException(msg)
+
+
+@then(r'at least one `([^`]+)`, or at least one `([^`]+)` for every `([^`]+)`, should be on the ([^ ]+) codelist')
+def then_at_least_one_on_codelist_or_for_every(xml, xpath_expression, for_every_xpath_expression, for_every_elements, codelist, **kwargs):
+    try:
+        then_at_least_one_on_codelist(xml, xpath_expression, codelist, **kwargs)
+    except StepException:
+        for element in xml.xpath(for_every_elements):
+            then_at_least_one_on_codelist(element, for_every_xpath_expression, codelist, **kwargs)
+
+    return xml
 
 
 @given(r'the activity is current')

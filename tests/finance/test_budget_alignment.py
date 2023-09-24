@@ -122,6 +122,69 @@ class TestCRSCode(TestCase):
 
         assert result is True
 
+    def test_sector_code_in_transaction(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <default-aid-type code="A09"/>
+          <transaction>
+            <aid-type code="A03"/>
+            <sector code="1000"/>
+          </transaction>
+          <transaction>
+            <aid-type code="A03"/>
+            <sector code="1000"/>
+            <sector code="NOTDAC" vocabulary="NOTDAC"/>
+          </transaction>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is True
+
+    def test_sector_code_not_in_every_transaction(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <default-aid-type code="A09"/>
+          <transaction>
+            <aid-type code="A03"/>
+            <sector code="1000"/>
+          </transaction>
+          <transaction>
+            <aid-type code="A03"/>
+          </transaction>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is False
+
+    def test_sector_code_not_on_list_in_every_transaction(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <default-aid-type code="A09"/>
+          <transaction>
+            <aid-type code="A03"/>
+            <sector code="1000"/>
+          </transaction>
+          <transaction>
+            <aid-type code="A03"/>
+            <sector code="NOT_ON_LIST"/>
+          </transaction>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is False
+
     def test_bad_sector_code(self):
         xml = '''
         <iati-activity>
