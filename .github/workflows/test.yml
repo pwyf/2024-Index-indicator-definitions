@@ -1,0 +1,21 @@
+name: Test
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.8' ]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: pip
+        cache-dependency-path: requirements_dev.txt
+    - name: Install requirements_dev.txt
+      run: pip install -r requirements_dev.txt
+    - name: Test 
+      run: py.test
