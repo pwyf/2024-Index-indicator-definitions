@@ -29,7 +29,7 @@ class TestTitle(TestCase):
 
         assert result is False
 
-    def test_title_narrative_is_present(self):
+    def test_title_is_present(self):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
@@ -44,7 +44,7 @@ class TestTitle(TestCase):
 
         assert result is True
 
-    def test_title_is_present(self):
+    def test_title_no_narrative(self):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
@@ -55,13 +55,15 @@ class TestTitle(TestCase):
         activity = etree.fromstring(xml)
         result = self.test(activity)
 
-        assert result is True
+        assert result is False
 
     def test_title_is_insufficiently_short(self):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
-          <title>Too short</title>
+          <title>
+            <narrative>Too short</narrative>
+          </title>
         </iati-activity>
         '''
 
@@ -75,7 +77,9 @@ class TestTitle(TestCase):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
-          <title>A much much longer title</title>
+          <title>
+            <narrative>A much much longer title</narrative>
+          </title>
         </iati-activity>
         '''
 

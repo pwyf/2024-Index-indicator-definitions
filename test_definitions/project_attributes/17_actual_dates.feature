@@ -5,10 +5,10 @@ Feature: Actual dates
     Given an IATI activity
      And the activity is current
      And `activity-status/@code` is one of 2, 3 or 4
-     Then `activity-date[@type="2" or @type="start-actual"]` should be present
+     Then `activity-date[@type="2"]` should be present
 
   Scenario Outline: Actual end date is present
     Given an IATI activity
      And the activity is current
      And `activity-status/@code` is one of 3 or 4
-     Then `activity-date[@type="4" or @type="end-actual"]` should be present
+     Then `activity-date[@type="4"]` should be present

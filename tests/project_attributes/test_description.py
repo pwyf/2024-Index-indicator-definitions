@@ -29,7 +29,7 @@ class TestDescription(TestCase):
 
         assert result is False
 
-    def test_description_narrative_is_present(self):
+    def test_description_is_present(self):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
@@ -44,7 +44,7 @@ class TestDescription(TestCase):
 
         assert result is True
 
-    def test_description_is_present(self):
+    def test_description_no_narrative(self):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
@@ -55,13 +55,15 @@ class TestDescription(TestCase):
         activity = etree.fromstring(xml)
         result = self.test(activity)
 
-        assert result is True
+        assert result is False
 
     def test_description_is_insufficiently_short(self):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
-          <description>A short description</description>
+          <description>
+            <narrative>A short description</narrative>
+          </description>
         </iati-activity>
         '''
 
