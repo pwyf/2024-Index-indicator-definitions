@@ -137,6 +137,15 @@ def then_at_least_one_on_codelist_or_for_every(xml, xpath_expression, for_every_
     return xml
 
 
+@then(r'`([^`]+)` should be present, or at least one `([^`]+)` should be on the ([^ ]+) codelist')
+def then_is_present_or_at_least_one_on_codelist(xml, present_xpath_expression, on_codelist_xpath_expression, codelist, **kwargs):
+    try:
+        then_is_present(xml, present_xpath_expression, **kwargs)
+    except StepException:
+        then_at_least_one_on_codelist(xml, on_codelist_xpath_expression, codelist, **kwargs)
+    return xml
+
+
 @given(r'the activity is current')
 def given_activity_is_current(xml, **kwargs):
     try:

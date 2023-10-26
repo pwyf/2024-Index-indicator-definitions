@@ -16,6 +16,7 @@ class TestSubNational(TestCase):
         tester = BDDTester(steps_path)
         self.feature = tester.load_feature(feature_path)
         self.test = self.feature.tests[1] # location point test
+        self.codelists = {'GeographicVocabulary': ['A1', 'A2', 'A3', 'A4', 'G1', 'G2']}
 
     def test_basic_failure(self):
         xml = '''
@@ -25,7 +26,7 @@ class TestSubNational(TestCase):
         '''
 
         activity = etree.fromstring(xml)
-        result = self.test(activity)
+        result = self.test(activity, codelists=self.codelists)
 
         assert result is False
 
@@ -38,7 +39,7 @@ class TestSubNational(TestCase):
         '''
 
         activity = etree.fromstring(xml)
-        result = self.test(activity)
+        result = self.test(activity, codelists=self.codelists)
 
 
         assert result is None
@@ -55,7 +56,7 @@ class TestSubNational(TestCase):
         '''
 
         activity = etree.fromstring(xml)
-        result = self.test(activity)
+        result = self.test(activity, codelists=self.codelists)
 
         assert result is None
 
@@ -74,22 +75,123 @@ class TestSubNational(TestCase):
         '''
 
         activity = etree.fromstring(xml)
-        result = self.test(activity)
+        result = self.test(activity, codelists=self.codelists)
 
         assert result is None
 
-    def test_pass(self):
+    def test_pass_point(self):
         xml = '''
         <iati-activity>
           <activity-status code="2"/>
           <location>
-              <point />
+            <point />
           </location>
         </iati-activity>
         '''
 
         activity = etree.fromstring(xml)
-        result = self.test(activity)
+        result = self.test(activity, codelists=self.codelists)
 
         assert result is True
 
+    def test_pass_location_id(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <location>
+            <location-id vocabulary="G1" code="1453782" />
+          </location>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is True
+
+    def test_fail_location_id(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <location>
+            <location-id code="1453782" />
+          </location>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is False
+
+    def test_pass_location_administrative(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <location>
+            <administrative vocabulary="G1" level="1" code="1453782" />
+          </location>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is True
+
+    def test_fail_location_administrative(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <location>
+            <administrative vocabulary="BAD_CODE" level="1" code="1453782" />
+          </location>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is False
+
+    def test_pass_no_vocabularies(self):
+        # This should pass because there's a point element,
+        # despite the fact that vocabulary is missing for
+        # administrative and location-id
+
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <location>
+            <location-id />
+            <administrative />
+            <point />
+          </location>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is True
+
+    def test_pass_wrong_vocabularies(self):
+        # This should pass because there's a point element,
+        # despite the fact that vocabulary is missing for
+        # administrative and location-id
+
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <location>
+            <location-id vocabulary="BAD_CODE" />
+            <administrative vocabulary="BAD_CODE" />
+            <point />
+          </location>
+        </iati-activity>
+        '''
+
+        activity = etree.fromstring(xml)
+        result = self.test(activity, codelists=self.codelists)
+
+        assert result is True
