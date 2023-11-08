@@ -11,7 +11,7 @@ class TestSubNational(TestCase):
         steps_path = join(self.FILEPATH, '..', '..', 'test_definitions',
                           'step_definitions.py')
         feature_path = join(self.FILEPATH, '..', '..', 'test_definitions',
-                            'project_attributes', '21_sub-national_location.feature')
+                            'project_attributes', '21_location.feature')
 
         tester = BDDTester(steps_path)
         self.feature = tester.load_feature(feature_path)
