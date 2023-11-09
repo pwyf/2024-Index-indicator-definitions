@@ -18,6 +18,22 @@ class TestDisbursementsAndExpenditures(TestCase):
         feature = tester.load_feature(feature_path)
         self.test = feature.tests[0]
 
+    def test_disbursement_or_expenditure(self):
+        xml = '''
+        <iati-activity>
+          <activity-status code="2"/>
+          <transaction>
+            <transaction-type code="{}"/>
+          </transaction>
+        </iati-activity>
+        '''
+
+        for transaction_type in ['3', '4']:
+            activity = etree.fromstring(xml.format(transaction_type))
+            result = self.test(activity)
+
+            assert result is True
+
     def test_disbursement_or_expenditure_non_zero(self):
         xml = '''
         <iati-activity>
